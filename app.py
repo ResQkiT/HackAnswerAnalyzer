@@ -17,7 +17,9 @@ ALLOWED_EXTENSIONS = {'xls', 'xlsx'}
 
 #Используемые анализаторы
 analizers_list = [AnalizerObject("Стандартный анализатор", "Считает число строк и столбцов в файлу", first_analizer),
-                  AnalizerObject("Нестандартный анализатор", "Считает ворон", lambda str : {})]
+                  AnalizerObject("Нестандартный анализатор", "Считает ворон", week_analizer)
+                  
+                  ]
 
 # Проверяем, является ли файл разрешённым типом
 def allowed_file(filename):
@@ -28,6 +30,7 @@ def allowed_file(filename):
 def index():
     global  analizers_list
     return render_template("index.html", analizers_list=analizers_list)
+
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:

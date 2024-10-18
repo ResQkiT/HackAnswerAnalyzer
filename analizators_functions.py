@@ -9,3 +9,5 @@ def first_analizer(file_path):
     print("")
     return ResponseObject(mp)
 
+def week_analizer(file_path):
+    return ResponseObject({});

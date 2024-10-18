@@ -16,15 +16,15 @@
     </header>
 
     <div class="container">
-            {% with messages = get_flashed_messages() %}
-            {% if messages %}
-            <ul>
-                {% for message in messages %}
-                <li>{{ message }}</li>
-                {% endfor %}
-            </ul>
-            {% endif %}
-            {% endwith %}
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
         <!-- Раздел для загрузки Excel файла -->
         <div class="upload-section">
             <h2>Загрузите файл для анализа</h2>
@@ -32,19 +32,27 @@
                 <input type="file" name="file" accept=".xls,.xlsx" required>
                 <br><br>
                 <button style="margin: 0 auto;" type="submit" class="btn">Анализировать</button>
-                <!-- Перенос кнопки внутрь формы -->
             </form>
         </div>
-        <!-- Блоки для результатов анализа -->
 
+        <!-- Блоки для результатов анализа -->
         {% for analizer in analizers_list %}
+        {% if analizer.is_valid() %}
         <div class="analysis-section">
-            <h3>{{analizer.name}}</h3>
-            <h4> {{analizer.description}} </h4>
-            {% for items in analizer.get_as_pair_list() %}
-            <h3>{{ items[0] }} -> {{ items[1] }}</h3>
-            {% endfor %}
+            <div class="analysis-item">
+                <div class="text-section">
+                    <h3>{{ analizer.name }}</h3>
+                    <h3>{{ analizer.description }}</h4>
+                    {% for items in analizer.get_as_pair_list() %}
+                    <p>{{ items[0] }} -> {{ items[1] }}</p>
+                    {% endfor %}
+                </div>
+                <div class="image-section">
+                    <img src="{{ url_for('static', filename='images/' + analizer.get_unique_hash() + '.png') }}" alt="Изображение">
+                </div>
+            </div>
         </div>
+        {% endif %}
         {% endfor %}
     </div>
 </body>

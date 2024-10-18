@@ -42,7 +42,7 @@ header p {
     margin: 20px auto;
 }
 
-.upload-section h2 {
+.upload-section h3 {
     color: #2ecc71;
 }
 
@@ -54,8 +54,8 @@ header p {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.analysis-section h3 {
-    color: #2ecc71;
+.analysis-section p {
+    color: #000000;
 }
 
 .btn {
@@ -69,4 +69,32 @@ header p {
 
 .btn:hover {
     background-color: #27ae60;
+}
+
+.analysis-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.text-section {
+    flex: 1;
+    margin-right: 20px;
+}
+
+.text-section h3, .text-section h4 {
+    color: #2ecc71;
+    margin: 0;
+    margin-bottom: 10px;
+}
+
+.image-section {
+    max-width: 300px;
+}
+
+.image-section img {
+    width: 100%; 
+    height: auto; 
+    border-radius: 8px; 
 }
