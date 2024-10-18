@@ -1,0 +1,4 @@
+Build:
+docker build -t analyzer .
+Run
+docker run -p 5000:5000 analyzer

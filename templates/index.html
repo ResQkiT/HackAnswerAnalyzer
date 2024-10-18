@@ -1,18 +1,52 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Пример Flask</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Анализ анкет</title>
 </head>
-<body>
-    <h1>Привет, {{ user.name }}!</h1>
 
-    <h2>Твои любимые фрукты:</h2>
-    <ul>
-        {% for item in items %}
-            <li>{{ item }}</li>
+<body>
+    <!-- Шапка с информацией о команде -->
+    <header>
+        <h1>Анализ анкет при увольнении</h1>
+        <p>Разработано командой ПРОНайк</p>
+    </header>
+
+    <div class="container">
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <ul>
+                {% for message in messages %}
+                <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            {% endwith %}
+        <!-- Раздел для загрузки Excel файла -->
+        <div class="upload-section">
+            <h2>Загрузите файл для анализа</h2>
+            <form action="/upload" method="POST" enctype="multipart/form-data">
+                <input type="file" name="file" accept=".xls,.xlsx" required>
+                <br><br>
+                <button style="margin: 0 auto;" type="submit" class="btn">Анализировать</button>
+                <!-- Перенос кнопки внутрь формы -->
+            </form>
+        </div>
+        <!-- Блоки для результатов анализа -->
+
+        {% for analizer in analizers_list %}
+        <div class="analysis-section">
+            <h3>{{analizer.name}}</h3>
+            <h4> {{analizer.description}} </h4>
+            {% for items in analizer.get_as_pair_list() %}
+            <h3>{{ items[0] }} -> {{ items[1] }}</h3>
+            {% endfor %}
+        </div>
         {% endfor %}
-    </ul>
+    </div>
 </body>
+
 </html>
