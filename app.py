@@ -2,7 +2,6 @@ from flask import Flask, render_template, request, redirect, flash
 import os
 import pandas as pd
 from dao.AnalizerObject import AnalizerObject
-
 from analizators_functions import *
 
 app = Flask(__name__)
@@ -17,14 +16,13 @@ ALLOWED_EXTENSIONS = {'xls', 'xlsx'}
 
 #Используемые анализаторы
 analizers_list = [AnalizerObject("Стандартный анализатор", "Считает число строк и столбцов в файлу", first_analizer),
-                  AnalizerObject("Нестандартный анализатор", "Считает ворон", week_analizer)
-                  
+                  AnalizerObject("Нестандартный анализатор", "Считает ворон", week_analizer),
+                  AnalizerObject("Гойда анализатор", "Смотрит сколько в каждом столбце строк", deep_learn_analizer)
                   ]
 
 # Проверяем, является ли файл разрешённым типом
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
 
 @app.route('/')
 def index():
@@ -51,13 +49,13 @@ def upload_file():
 
         # Обрабатываем Excel файл с помощью pandas
         try:
-            #Вот тут идет анализ файла
+            # Запускаем анализаторы
             for analizer in analizers_list:
-                flash(f'Запускаю анализатор')
                 analizer.analize(file_path)
-                
+
         except Exception as e:
             flash(f'Ошибка при обработке файла: {e}')
+            return redirect(request.url)
 
         return redirect('/')
     else:
