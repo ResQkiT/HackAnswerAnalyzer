@@ -50,8 +50,7 @@ docker build -t analyzer .
 docker run -p 5000:5000 analyzer
 ```
 ### Showcase
-
-•
+[showcase](https://drive.google.com/drive/folders/1ULR0RDg_SGYCAEE4DUc--IbL-r_mgYHW?usp=sharing)
 
 ### Команда
 
