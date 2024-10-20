@@ -1,3 +1,5 @@
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -6,20 +8,11 @@ class GistogramGenerator:
         pass
 
     def generate_pie_chart(self, data: dict, output_path: str):
-        """
-        Генерирует красивую разноцветную круговую диаграмму с использованием seaborn
-        и сохраняет её как изображение.
-        
-        :param data: Хеш-таблица (словарь), где ключи — категории, а значения — величины.
-        :param output_path: Путь для сохранения изображения.
-        """
-        # Получаем ключи и значения из хеш-таблицы
         labels = list(data.keys())
         sizes = list(data.values())
         
         # Используем палитру из Seaborn для ярких и разноцветных сегментов
         colors = sns.color_palette('bright', len(labels))
-
         # Генерация круговой диаграммы с разделением между сегментами
         plt.figure(figsize=(7, 7))  # Устанавливаем размер, чтобы диаграмма точно помещалась в квадрат
         wedges, texts, autotexts = plt.pie(

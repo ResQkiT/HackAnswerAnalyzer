@@ -98,3 +98,12 @@ header p {
     height: auto; 
     border-radius: 8px; 
 }
+
+#loading {
+    display: none; /* Скрываем анимацию по умолчанию */
+    position: fixed; /* Позиционируем загрузку поверх контента */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000; /* Убедитесь, что загрузка выше других элементов */
+}

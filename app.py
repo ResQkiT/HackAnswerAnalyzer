@@ -13,11 +13,11 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Разрешённые расширения для файлов
 ALLOWED_EXTENSIONS = {'xls', 'xlsx'}
-
+#AnalizerObject("Стандартный анализатор", "Считает число строк и столбцов в файлу", first_analizer)
 #Используемые анализаторы
-analizers_list = [AnalizerObject("Стандартный анализатор", "Считает число строк и столбцов в файлу", first_analizer),
-                  AnalizerObject("Нестандартный анализатор", "Считает ворон", week_analizer),
-                  AnalizerObject("Гойда анализатор", "Смотрит сколько в каждом столбце строк", deep_learn_analizer)
+analizers_list = [
+                  AnalizerObject("Анализ тональности", "", deep_learn_analizer),
+                  AnalizerObject("Основные причины ухода", "", deep_learn_analizer2)
                   ]
 
 # Проверяем, является ли файл разрешённым типом
@@ -26,8 +26,12 @@ def allowed_file(filename):
 
 @app.route('/')
 def index():
-    global  analizers_list
+    global analizers_list
     return render_template("index.html", analizers_list=analizers_list)
+
+@app.route('/upload', methods=["GET"])
+def answerget():
+    return redirect('/')
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
@@ -49,10 +53,10 @@ def upload_file():
 
         # Обрабатываем Excel файл с помощью pandas
         try:
-            # Запускаем анализаторы
-            for analizer in analizers_list:
-                analizer.analize(file_path)
 
+            for analizator in analizers_list:
+                analizator.analize(file_path)
+     
         except Exception as e:
             flash(f'Ошибка при обработке файла: {e}')
             return redirect(request.url)
@@ -62,9 +66,8 @@ def upload_file():
         flash('Разрешены только Excel файлы (xls, xlsx)')
         return redirect(request.url)
 
-
 if __name__ == '__main__':
     # Создаём папку для загрузок, если её нет
     if not os.path.exists(UPLOAD_FOLDER):
         os.makedirs(UPLOAD_FOLDER)
-    app.run(debug=True)
+    app.run(debug=False)

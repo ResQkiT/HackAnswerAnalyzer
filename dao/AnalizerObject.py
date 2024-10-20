@@ -7,7 +7,7 @@ class AnalizerObject:
         self.description = description
         self.analize_function = analize_function
         self.response_object = None;
-        self.creation_time = str(time.time_ns())
+        self.creation_time = str(time.time_ns()) + str(hash(self))
 
     def is_valid(self) -> bool:
         return self.response_object != None

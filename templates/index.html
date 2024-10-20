@@ -28,13 +28,22 @@
         <!-- Раздел для загрузки Excel файла -->
         <div class="upload-section">
             <h2>Загрузите файл для анализа</h2>
-            <form action="/upload" method="POST" enctype="multipart/form-data">
+            <form id="upload-form" action="/upload" method="POST" enctype="multipart/form-data">
                 <input type="file" name="file" accept=".xls,.xlsx" required>
                 <br><br>
                 <button style="margin: 0 auto;" type="submit" class="btn">Анализировать</button>
             </form>
         </div>
 
+        <div id="loading">
+            <img src="{{ url_for('static', filename='loading.gif') }}" alt="Загрузка...">
+        </div>
+    
+        <script>
+            document.getElementById('upload-form').onsubmit = function() {
+                document.getElementById('loading').style.display = 'block'; // Показываем анимацию загрузки
+            };
+        </script>
         <!-- Блоки для результатов анализа -->
         {% for analizer in analizers_list %}
         {% if analizer.is_valid() %}
