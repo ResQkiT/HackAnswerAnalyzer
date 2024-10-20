@@ -17,7 +17,7 @@ from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 from keybert import KeyBERT
 import joblib
-import pymorphy2
+
 # Загрузка необходимых ресурсов NLTK
 
 def week_analizer(file_path):
@@ -101,22 +101,16 @@ def deep_learn_analizer2(file_path):
     X = vectorizer.transform(data[0]).toarray()
 
     # Кластеризация с использованием KMeans
-    n_cluster = 6 # Задайте количество кластеров
+    n_cluster = 8 # Задайте количество кластеров
     
     data['cluster_kmeans'] = kmeans.predict(X)
     
-    # Инициализация морфологического анализатора
-    morph = pymorphy2.MorphAnalyzer()
 
-    def lemmatize_word(word):
-        parsed_word = morph.parse(word)[0]
-        return parsed_word.normal_form
     # Получение репрезентативного слова для каждого кластера
     cluster_summary = {}
 
     for i in range(n_cluster):
         representative_word = get_representative_word(i, keybert_model, data)
-        representative_word =lemmatize_word(representative_word )
         count = len(data[data['cluster_kmeans'] == i])  # Количество элементов в кластере
         cluster_summary[f"Cluster {i} ({representative_word})"] = count
     
