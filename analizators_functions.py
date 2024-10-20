@@ -16,10 +16,9 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 from keybert import KeyBERT
-
+import joblib
+import pymorphy2
 # Загрузка необходимых ресурсов NLTK
-import nltk
-
 
 def week_analizer(file_path):
     return ResponseObject({});
@@ -63,8 +62,9 @@ def preprocess_text(text):
     return ' '.join(tokens)
 
 def data_prepocess(file_path):
-    employee_comments = pd.read_excel(file_path, sheet_name='Workers')
-    data = pd.DataFrame(employee_comments.apply(lambda row: ' '.join([str(row[col]) for col in ['В1', 'В1.1'] if pd.notna(row[col])]), axis=1))
+    employee_comments = pd.read_excel(file_path)
+
+    data = pd.DataFrame(employee_comments.apply(lambda row: ' '.join([str(row[i]) for i in range(2) if pd.notna(row[i])]), axis=1))
     # Удаление или замена пропущенных значений
     data.dropna(inplace=True)  # или data.fillna(value, inplace=True)
 
@@ -72,15 +72,12 @@ def data_prepocess(file_path):
     data.drop_duplicates(inplace=True)
 
     #Подумать
-    nltk.download('stopwords')
-    nltk.download('wordnet')
-
     data[0] = data[0].apply(preprocess_text)  # Замените 'text_column' на ваше название колонки с текстом
     return data
 
 
 # Функция для получения репрезентативного слова для каждого кластера
-def get_representative_word(cluster_label):
+def get_representative_word(cluster_label, keybert_model, data):
     cluster_data = data[data['cluster_kmeans'] == cluster_label]
     if cluster_data.empty:
         return "Нет данных"
@@ -94,25 +91,32 @@ def get_representative_word(cluster_label):
     return keywords[0][0] if keywords else "Нет ключевых слов"
 
 def deep_learn_analizer2(file_path):
-
-    data = data_prepocess(file_path)
-
-    vectorizer = TfidfVectorizer(max_features=1000)
-    X = vectorizer.fit_transform(data[0]).toarray()
-
-    # Кластеризация с использованием KMeans
-    n_clusters = 7  # Задайте количество кластеров
-    kmeans = KMeans(n_clusters=n_clusters, random_state=42)
-    data['cluster_kmeans'] = kmeans.fit_predict(X)
-
+    kmeans = joblib.load('models/kmeans_model.pkl')
+    vectorizer = joblib.load('models/tfidf_vectorizer.pkl')
     # Инициализируем модель KeyBERT
     keybert_model = KeyBERT()
 
+    data = data_prepocess(file_path)
+
+    X = vectorizer.transform(data[0]).toarray()
+
+    # Кластеризация с использованием KMeans
+    n_cluster = 6 # Задайте количество кластеров
+    
+    data['cluster_kmeans'] = kmeans.predict(X)
+    
+    # Инициализация морфологического анализатора
+    morph = pymorphy2.MorphAnalyzer()
+
+    def lemmatize_word(word):
+        parsed_word = morph.parse(word)[0]
+        return parsed_word.normal_form
     # Получение репрезентативного слова для каждого кластера
     cluster_summary = {}
 
-    for i in range(n_clusters):
-        representative_word = get_representative_word(i)
+    for i in range(n_cluster):
+        representative_word = get_representative_word(i, keybert_model, data)
+        representative_word =lemmatize_word(representative_word )
         count = len(data[data['cluster_kmeans'] == i])  # Количество элементов в кластере
         cluster_summary[f"Cluster {i} ({representative_word})"] = count
     

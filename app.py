@@ -3,8 +3,13 @@ import os
 import pandas as pd
 from dao.AnalizerObject import AnalizerObject
 from analizators_functions import *
+import nltk
+nltk.download('stopwords')
+nltk.download('wordnet')
 
 app = Flask(__name__)
+
+
 app.secret_key = "supersecretkey"  # Для отображения сообщений через flash
 
 # Папка для сохранения загруженных файлов
@@ -13,7 +18,9 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Разрешённые расширения для файлов
 ALLOWED_EXTENSIONS = {'xls', 'xlsx'}
-#AnalizerObject("Стандартный анализатор", "Считает число строк и столбцов в файлу", first_analizer)
+#AnalizerObject("Тестовый анализатор", "Считает число строк и столбцов в файлу", first_analizer)
+#AnalizerObject("Основные причины ухода", "", deep_learn_analizer2)
+#AnalizerObject("Анализ тональности", "", deep_learn_analizer)
 #Используемые анализаторы
 analizers_list = [
                   AnalizerObject("Анализ тональности", "", deep_learn_analizer),
@@ -52,14 +59,13 @@ def upload_file():
         file.save(file_path)  # Сохраняем файл
 
         # Обрабатываем Excel файл с помощью pandas
-        try:
-
-            for analizator in analizers_list:
+        for analizator in analizers_list:
+            try:
                 analizator.analize(file_path)
      
-        except Exception as e:
-            flash(f'Ошибка при обработке файла: {e}')
-            return redirect(request.url)
+            except Exception as e:
+                flash(f'Ошибка при обработке файла: {e}')
+                return redirect(request.url)
 
         return redirect('/')
     else:
